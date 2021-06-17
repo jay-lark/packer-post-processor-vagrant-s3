@@ -18,6 +18,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
@@ -42,6 +43,7 @@ type Config struct {
 	AccessKey           string        `mapstructure:"access_key_id"`
 	SecretKey           string        `mapstructure:"secret_key"`
 	SessionToken        string        `mapstructure:"session_token"`
+	RoleARN             string        `mapstructure:"role_arn"`
 	SignedExpiry        time.Duration `mapstructure:"signed_expiry"`
 	StorageClass        string        `mapstructure:"storage_class"`
 	PartSize            int64         `mapstructure:"part_size"`
@@ -108,6 +110,13 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 				SessionToken:    p.config.SessionToken,
 			},
 		})
+	} else if p.config.RoleARN != "" && p.config.CredentialFile != "" {
+		// ARN of role to assume if defined.
+		// Environmental variables used:
+		// $ROLE_ARN
+		sess := session.Must(session.NewSession())
+		cred = stscreds.NewCredentials(sess, "RoleARN")
+
 	} else if p.config.CredentialFile != "" || p.config.CredentialProfile != "" {
 		// SharedCredentialProvider if either credentials file or a profile is defined
 		// Environmental variables used:
