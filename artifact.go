@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-const BuilderId = "lmars.post-processor.vagrant-s3"
+const BuilderId = "jay-lark.post-processor.vagrant-s3"
 
 type Artifact struct {
 	Url string
