@@ -1,4 +1,4 @@
-module github.com/jay-lark/packer-post-processor-vagrant-s3
+replace github.com/lmars/packer-post-processor-vagrant-s3 => github.com/jay-lark/packer-post-processor-vagrant-s3
 
 go 1.14
 
